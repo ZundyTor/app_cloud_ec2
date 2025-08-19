@@ -1,0 +1,5 @@
+venv/
+*.pyc
+__pycache__/
+mi_app_ec2.zip
+*.pem
