@@ -46,7 +46,9 @@ python -m venv venv
 
 # Si PowerShell bloquea scripts (temporal para sesión)
 Windows (Powershell)
-``Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process``
+```
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+```
 
 # Activar
 Windows (Powershell)
@@ -238,6 +240,7 @@ aws ec2 delete-key-pair --key-name mi-key-name
 aws s3 rb s3://mi-bucket --force
 
 Espera que el estado sea terminated y revisa Cost Explorer para confirmar que no haya cargos residuales.
+
 
 
 
