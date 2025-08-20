@@ -33,8 +33,7 @@ AWS
 - Conocer Free Tier (usar t2.micro/t3.micro y vigilar facturación).
 
 # Ejecutar localmente
-```
-Windows (Powershell)
+```Windows (Powershell)
 cd C:\ruta\a\mi_app_ec2
 ```
 
@@ -232,6 +231,7 @@ aws ec2 delete-key-pair --key-name mi-key-name
 aws s3 rb s3://mi-bucket --force
 
 Espera que el estado sea terminated y revisa Cost Explorer para confirmar que no haya cargos residuales.
+
 
 
 
