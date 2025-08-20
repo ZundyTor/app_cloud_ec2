@@ -46,26 +46,30 @@ Ejecutar localmente
 ``.\venv\Scripts\Activate.ps1``
 
 # instalar dependencias
-```bash
+```
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
 # ejecutar (dev)
-python application.py
+`python application.py`
 # abrir http://localhost:5000
 
 # opcional si falla en Windows
+```
 pip install waitress
 waitress-serve --port=8000 application:application
+```
 
 # Linux/macOS
+```
 cd ~/mi_app_ec2
 python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 python application.py
+```
 # abrir http://localhost:5000
 
 Para detener el servidor: Ctrl + C. Para salir del venv: deactivate
@@ -84,42 +88,54 @@ Seguridad: restringe SSH a tu IP siempre que sea posible
 
 Despliegue en la instancia (Ubuntu 22.04)
 Desde máquina local:
+```
 chmod 400 mi_aws_key.pem
 ssh -i "mi_aws_key.pem" ubuntu@<PUBLIC_IP_O_DNS>
+```
 
 En la instancia (usuario ubuntu):
 # actualizar e instalar paquetes
+```
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y python3-pip python3-venv git nginx
+```
 
 # (opcional) crear usuario de despliegue
+```
 sudo adduser --disabled-password --gecos "" deployer
 sudo usermod -aG sudo deployer
 sudo mkdir -p /var/www
 sudo chown deployer:deployer /var/www
+```
 
 # cambiar a deployer
+```
 sudo su - deployer
 cd /var/www
+```
 
 # clonar repo (reemplaza TU_USUARIO)
+```
 git clone https://github.com/TU_USUARIO/mi_app_ec2.git
 cd mi_app_ec2
+```
 
 # crear venv e instalar dependencias
+```
 python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
+```
 
 # probar con gunicorn (temporal)
-gunicorn --bind 0.0.0.0:8000 application:application
+``gunicorn --bind 0.0.0.0:8000 application:application``
 # abrir en navegador: http://<PUBLIC_IP_O_DNS>:8000
 # Ctrl+C para detener
 
 systemd + Gunicorn + Nginx (archivos y comandos)
 Ejecutar como root o con sudo:
-sudo tee /etc/systemd/system/mi_app_gunicorn.service > /dev/null <<'EOF'
+``sudo tee /etc/systemd/system/mi_app_gunicorn.service > /dev/null <<'EOF'``
 [Unit]
 Description=Gunicorn instance to serve mi_app_ec2
 After=network.target
@@ -136,13 +152,16 @@ WantedBy=multi-user.target
 EOF
 
 Activar y arrancar:
+```
 sudo systemctl daemon-reload
 sudo systemctl start mi_app_gunicorn
 sudo systemctl enable mi_app_gunicorn
 sudo systemctl status mi_app_gunicorn
+```
 
 Configurar Nginx
 Crear archivo /etc/nginx/sites-available/mi_app:
+```
 sudo tee /etc/nginx/sites-available/mi_app > /dev/null <<'EOF'
 server {
     listen 80;
@@ -158,11 +177,14 @@ server {
     }
 }
 EOF
+```
 
 Habilitar y reiniciar Nginx:
+```
 sudo ln -s /etc/nginx/sites-available/mi_app /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx
+```
 
 Verifica en navegador: http://<PUBLIC_IP_O_DNS>/
 
@@ -204,6 +226,7 @@ aws ec2 delete-key-pair --key-name mi-key-name
 aws s3 rb s3://mi-bucket --force
 
 Espera que el estado sea terminated y revisa Cost Explorer para confirmar que no haya cargos residuales.
+
 
 
 
