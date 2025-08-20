@@ -37,17 +37,17 @@ Ejecutar localmente
 ``cd C:\ruta\a\mi_app_ec2``
 
 # crear y activar venv
-python -m venv venv
+``python -m venv venv``
 
 # si PowerShell bloquea scripts (temporal para sesión)
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+``Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process``
 
 # activar
-.\venv\Scripts\Activate.ps1
+``.\venv\Scripts\Activate.ps1``
 
 # instalar dependencias
-pip install --upgrade pip
-pip install -r requirements.txt
+``pip install --upgrade pip``
+``pip install -r requirements.txt``
 
 # ejecutar (dev)
 python application.py
@@ -202,5 +202,6 @@ aws ec2 delete-key-pair --key-name mi-key-name
 aws s3 rb s3://mi-bucket --force
 
 Espera que el estado sea terminated y revisa Cost Explorer para confirmar que no haya cargos residuales.
+
 
 
