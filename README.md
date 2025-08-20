@@ -40,7 +40,9 @@ cd C:\ruta\a\mi_app_ec2
 
 # Crear y activar venv
 Windows (Powershell)
-```python -m venv venv```
+```
+python -m venv venv
+```
 
 # Si PowerShell bloquea scripts (temporal para sesión)
 Windows (Powershell)
@@ -48,7 +50,9 @@ Windows (Powershell)
 
 # Activar
 Windows (Powershell)
-``.\venv\Scripts\Activate.ps1``
+```
+.\venv\Scripts\Activate.ps1
+```
 
 # Instalar dependencias
 Windows (Powershell)
@@ -59,7 +63,9 @@ pip install -r requirements.txt
 
 # Ejecutar (dev)
 Windows (Powershell)
-`python application.py`
+```
+python application.py
+```
 - Abrir http://localhost:5000
 
 # Opcional si falla en Windows
@@ -78,8 +84,8 @@ pip install --upgrade pip
 pip install -r requirements.txt
 python application.py
 ```
-- abrir http://localhost:5000
-Para detener el servidor: Ctrl + C. Para salir del venv: deactivate
+- Abrir http://localhost:5000
+- Para detener el servidor: Ctrl + C. Para salir del venv: deactivate
 
 # Crear y configurar EC2 (consola AWS — pasos)
 1. EC2 → Launch instances.
@@ -232,6 +238,7 @@ aws ec2 delete-key-pair --key-name mi-key-name
 aws s3 rb s3://mi-bucket --force
 
 Espera que el estado sea terminated y revisa Cost Explorer para confirmar que no haya cargos residuales.
+
 
 
 
