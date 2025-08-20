@@ -40,7 +40,7 @@ cd C:\ruta\a\mi_app_ec2
 
 # Crear y activar venv
 Windows (Powershell)
-``python -m venv venv``
+```python -m venv venv```
 
 # Si PowerShell bloquea scripts (temporal para sesión)
 Windows (Powershell)
@@ -232,6 +232,7 @@ aws ec2 delete-key-pair --key-name mi-key-name
 aws s3 rb s3://mi-bucket --force
 
 Espera que el estado sea terminated y revisa Cost Explorer para confirmar que no haya cargos residuales.
+
 
 
 
