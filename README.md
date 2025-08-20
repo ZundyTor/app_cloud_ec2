@@ -1,12 +1,12 @@
-Descripción
+# Descripción
 Aplicación web mínima en Flask (Python) que convierte montos entre USD / EUR / COP usando tasas de ejemplo. Incluye UI con dos listas desplegables, campo de monto y botón Convertir, y botón para descargar un ZIP con todo el proyecto (/download).
 
-Aplicación demostrativa en Flask que:
-- Convierte cantidades entre USD, EUR y COP (tasas fijas de     ejemplo).
+Aplicación en Flask que:
+- Convierte cantidades entre USD, EUR y COP (tasas fijas).
 - Muestra una UI responsiva con dropdowns, input y botones.
-- Permite descargar el código completo vía /download para que   otra persona lo ejecute localmente.
+- Permite descargar el código completo vía /download para que otra persona lo ejecute localmente.
 
-Tecnologías
+# Tecnologías
 - Python 3.10+
 - Flask
 - Gunicorn (para Linux/EC2)
@@ -21,7 +21,7 @@ URL / IP pública
 - API de conversión: http://<PUBLIC_IP_O_DNS>/api/convert?from=USD&to=EUR&amount=10
 - Descargar ZIP: http://<PUBLIC_IP_O_DNS>/download
 
-Requisitos previos
+# Requisitos previos
 Local
 - Python 3 instalado (python --version o py -3 --version).
 - Git.
@@ -71,7 +71,6 @@ pip install -r requirements.txt
 python application.py
 ```
 # abrir http://localhost:5000
-
 Para detener el servidor: Ctrl + C. Para salir del venv: deactivate
 
 Crear y configurar EC2 (consola AWS — pasos)
@@ -226,6 +225,7 @@ aws ec2 delete-key-pair --key-name mi-key-name
 aws s3 rb s3://mi-bucket --force
 
 Espera que el estado sea terminated y revisa Cost Explorer para confirmar que no haya cargos residuales.
+
 
 
 
