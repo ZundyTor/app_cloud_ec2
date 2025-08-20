@@ -116,3 +116,90 @@ gunicorn --bind 0.0.0.0:8000 application:application
 # Ctrl+C para detener
 
 systemd + Gunicorn + Nginx (archivos y comandos)
+Ejecutar como root o con sudo:
+sudo tee /etc/systemd/system/mi_app_gunicorn.service > /dev/null <<'EOF'
+[Unit]
+Description=Gunicorn instance to serve mi_app_ec2
+After=network.target
+
+[Service]
+User=deployer
+Group=www-data
+WorkingDirectory=/var/www/mi_app_ec2
+Environment="PATH=/var/www/mi_app_ec2/venv/bin"
+ExecStart=/var/www/mi_app_ec2/venv/bin/gunicorn --workers 3 --bind unix:/var/www/mi_app_ec2/mi_app.sock application:application
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+Activar y arrancar:
+sudo systemctl daemon-reload
+sudo systemctl start mi_app_gunicorn
+sudo systemctl enable mi_app_gunicorn
+sudo systemctl status mi_app_gunicorn
+
+Configurar Nginx
+Crear archivo /etc/nginx/sites-available/mi_app:
+sudo tee /etc/nginx/sites-available/mi_app > /dev/null <<'EOF'
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/var/www/mi_app_ec2/mi_app.sock;
+    }
+
+    location /static/ {
+        alias /var/www/mi_app_ec2/static/;
+    }
+}
+EOF
+
+Habilitar y reiniciar Nginx:
+sudo ln -s /etc/nginx/sites-available/mi_app /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+
+Verifica en navegador: http://<PUBLIC_IP_O_DNS>/
+
+Verificación y pruebas
+Comprobaciones recomendadas:
+1. UI: abrir http://<PUBLIC_IP_O_DNS>/ — la interfaz debe mostrarse con dropdowns, input y botones.
+
+Problemas comunes y soluciones
+- 502 Bad Gateway (Nginx)
+    - Causa: Gunicorn no está corriendo o socket incorrecto.
+    - Comandos de depuración:
+        sudo systemctl status mi_app_gunicorn
+        sudo journalctl -u mi_app_gunicorn -n 200
+        sudo tail -n 200 /var/log/nginx/error.log
+    - Solución: revisar ExecStart y rutas de socket, reiniciar servicio.
+- Permisos .pem / SSH
+    - Ejecuta: chmod 400 mi_aws_key.pem y usa el usuario correcto (ubuntu@...).
+- gunicorn: command not found
+    - Asegúrate de activar el venv antes: source venv/bin/activate y pip install gunicorn
+- WSGI: callable 'application' no encontrado
+    - Verificar que tu archivo sea application.py y contenga application = Flask(...). En systemd/Gunicorn se usa application:application
+- PowerShell - ejecución de scripts bloqueada
+    - Para la sesión actual: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+    - Alternativa para activar: usar activate.bat en Windows o CMD:
+        .\venv\Scripts\activate.bat
+- Cargos inesperados
+    - Revisa EC2 Instances, EBS Volumes, S3 Buckets. Termina instancias y borra volúmenes. Consulta Billing & Cost Explorer.
+
+Limpieza / evitar cobros
+Consola (GUI):
+- EC2 → Instances → seleccionar → Actions → Instance State → Terminate
+- EC2 → Volumes → eliminar volúmenes no usados 
+- EC2 → Key Pairs → eliminar si no se usará
+- S3 → eliminar buckets (si se crearon)
+
+AWS CLI (si configurado):
+aws ec2 terminate-instances --instance-ids i-XXXXXXXXXXXXX
+aws ec2 delete-key-pair --key-name mi-key-name
+aws s3 rb s3://mi-bucket --force
+
+Espera que el estado sea terminated y revisa Cost Explorer para confirmar que no haya cargos residuales.
+
