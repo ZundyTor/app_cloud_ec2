@@ -28,7 +28,7 @@ def index():
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Conversor Mejorado — Despliegue EC2</title>
+  <title>Conversor de Monedas</title>
   <style>
     :root {
       font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
@@ -58,7 +58,7 @@ def index():
 <body>
   <div class="container">
     <div class="card">
-      <h1>Conversor de Moneda (Demo)</h1>
+      <h1>Conversor de Moneda</h1>
       <p class="lead">Selecciona la moneda de origen y la moneda destino, ingresa el monto y presiona <strong>Convertir</strong>.</p>
 
       <div class="row">
@@ -94,7 +94,6 @@ def index():
       <div id="output" class="result" style="display:none;"></div>
       <div id="error" class="result" style="display:none; background: #fff1f0; color: #7a1f1f;"></div>
 
-      <p class="note">Esta es una demo con tasas fijas de ejemplo. Para producción, integrar una API de tasas actualizadas.</p>
     </div>
   </div>
 
@@ -166,7 +165,6 @@ def api_convert():
     if result is None:
         return jsonify({"error": "Par no soportado", "supported_pairs": list(RATES.keys())}), 400
 
-    # limitar decimales razonables
     return jsonify({
         "from": frm,
         "to": to,
@@ -190,4 +188,5 @@ def download_zip():
 
 if __name__ == '__main__':
     application.run(host='0.0.0.0', port=5000, debug=True)
+
 
