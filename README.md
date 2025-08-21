@@ -114,7 +114,7 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y python3-pip python3-venv git nginx
 ```
 
-# Clonar repo (reemplaza TU_USUARIO)
+# Clonar repositorio
 ```
 git clone https://github.com/ZundyTor/app_cloud_ec2
 cd app_cloud_ec2
@@ -222,3 +222,4 @@ Consola (GUI):
 - S3 → eliminar buckets (si se crearon)
 
 Espera que el estado sea terminated y revisa Cost Explorer para confirmar que no haya cargos residuales.
+
