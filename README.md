@@ -6,15 +6,18 @@ Aplicación web mínima en Flask (Python) que convierte montos entre USD, EUR y 
 Incluye una interfaz web con listas desplegables, campo de monto, botón Convertir y opción para descargar el código fuente como ZIP (`/download`).  
 El objetivo es demostrar el despliegue y funcionamiento en la nube usando AWS EC2.
 
+---
+
 ## Tecnologías Utilizadas
 
 - **Python 3.10+**
 - **Flask** (microframework web)
 - **Gunicorn** (WSGI server para producción en Linux/EC2)
 - **Nginx** (reverse proxy para producción)
-- **systemd** (servicio de Gunicorn)
 - **Git / GitHub**
 - **AWS EC2** (Ubuntu Server 22.04 LTS — t2.micro/t3.micro Free Tier)
+
+---
 
 ## URL / IP Pública
 
@@ -23,6 +26,8 @@ El objetivo es demostrar el despliegue y funcionamiento en la nube usando AWS EC
 - Descargar proyecto: `http://<PUBLIC_IP>/download`
 
 > **Nota:** Reemplaza `<PUBLIC_IP>` por la dirección pública de tu instancia EC2.
+
+---
 
 ## Requisitos Previos
 
@@ -65,35 +70,52 @@ chmod 400 tu_clave.pem
 ssh -i tu_clave.pem ubuntu@<PUBLIC_IP>
 ```
 
-### 3. Actualizar e Instalar Dependencias
+---
+
+### 3. Actualizar e Instalar Dependencias  
+**(Ejecuta estos comandos FUERA del entorno virtual)**
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 sudo apt install python3-pip python3-venv git nginx -y
 ```
+> Si al ejecutar `sudo nginx -t`, obtienes **nginx: command not found**, es porque Nginx no está instalado. Instálalo con el comando anterior.
 
-### 4. Clonar el Proyecto
+---
 
+### 4. Clonar el Proyecto  
 ```bash
 git clone https://github.com/ZundyTor/app_cloud_ec2.git
 cd app_cloud_ec2
 ```
 
-### 5. Crear y Activar Entorno Virtual
+---
+
+### 5. Crear y Activar Entorno Virtual  
 
 ```bash
 python3 -m venv venv
+```
+Para activar el entorno virtual:
+```bash
 source venv/bin/activate
 ```
+> A partir de este punto, todos los comandos de Python, pip, Flask y Gunicorn deben ejecutarse **dentro del entorno virtual**.
 
-### 6. Instalar Dependencias Python
+---
+
+### 6. Instalar Dependencias Python  
+**(DENTRO del entorno virtual)**
 
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 7. Probar la Aplicación (solo para validar)
+---
+
+### 7. Probar la Aplicación Flask (solo para validar)  
+**(DENTRO del entorno virtual)**
 
 ```bash
 python application.py
@@ -105,77 +127,64 @@ python application.py
 
 ## 8. Desplegar con Gunicorn y Nginx (Modo Producción)
 
-### 8.1. Ejecutar con Gunicorn
+### 8.1. Ejecutar Gunicorn  
+**(DENTRO del entorno virtual)**
 
-```bash
-gunicorn --bind 0.0.0.0:8000 application:application
-```
-- La app estará en el puerto 8000.
+- El comando para Gunicorn es:  
+  ```bash
+  gunicorn --bind 127.0.0.1:8000 application:application
+  ```
+  > **No pongas `.py` en el nombre del archivo!**
 
-### 8.2. Configurar Nginx como Reverse Proxy
+---
+
+### 8.2. Configurar Nginx como Reverse Proxy  
+**(TODO lo relacionado con Nginx va FUERA del entorno virtual)**
 
 1. Crea archivo de configuración:
 
-```bash
-sudo nano /etc/nginx/sites-available/flaskapp
-```
+   ```bash
+   sudo nano /etc/nginx/sites-available/flaskapp
+   ```
 
 2. Agrega lo siguiente:
 
-```
-server {
-    listen 80;
-    server_name <PUBLIC_IP>;
+   ```
+   server {
+       listen 80;
+       server_name <PUBLIC_IP>;
 
-    location / {
-        proxy_pass http://127.0.0.1:8000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
+       location / {
+           proxy_pass http://127.0.0.1:8000;
+           proxy_set_header Host $host;
+           proxy_set_header X-Real-IP $remote_addr;
+           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+           proxy_set_header X-Forwarded-Proto $scheme;
+       }
+   }
+   ```
 
-3. Habilita el sitio y reinicia Nginx:
+3. Habilita el sitio (enlace simbólico) y reinicia Nginx:
 
-```bash
-sudo ln -s /etc/nginx/sites-available/flaskapp /etc/nginx/sites-enabled
-sudo nginx -t
-sudo systemctl restart nginx
-```
+   ```bash
+   sudo ln -s /etc/nginx/sites-available/flaskapp /etc/nginx/sites-enabled/flaskapp
+   sudo nginx -t
+   sudo systemctl restart nginx
+   ```
 
-### 8.3. Crear Servicio systemd (opcional, para ejecución automática)
-
-```bash
-sudo nano /etc/systemd/system/flaskapp.service
-```
-
-Agrega:
-
-```
-[Unit]
-Description=Gunicorn instance to serve Flask app
-After=network.target
-
-[Service]
-User=ubuntu
-Group=www-data
-WorkingDirectory=/home/ubuntu/app_cloud_ec2
-Environment="PATH=/home/ubuntu/app_cloud_ec2/venv/bin"
-ExecStart=/home/ubuntu/app_cloud_ec2/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 application:application
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Habilita y arranca el servicio:
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl start flaskapp
-sudo systemctl enable flaskapp
-```
+#### Errores comunes y soluciones:
+- Si recibes `File exists`, elimina el enlace existente:
+  ```bash
+  sudo rm /etc/nginx/sites-enabled/flaskapp
+  ```
+  y vuelve a crear el enlace.
+- Si ves `Not a directory`, elimina el archivo y crea el directorio:
+  ```bash
+  sudo rm /etc/nginx/sites-enabled
+  sudo mkdir /etc/nginx/sites-enabled
+  ```
+  Luego crea el enlace.
+- **NO elimines el directorio `/etc/nginx/sites-enabled`, solo el archivo/enlace dentro si es necesario.**
 
 ---
 
@@ -183,6 +192,19 @@ sudo systemctl enable flaskapp
 
 - Accede a `http://<PUBLIC_IP>/` desde cualquier navegador.
 - Prueba los endpoints, conversión y descarga de ZIP.
+- Para probar desde la terminal:  
+  **(FUERA del entorno virtual)**  
+  ```bash
+  curl -I http://localhost/
+  ```
+  Debes ver `HTTP/1.1 200 OK`.
+
+- Para probar Gunicorn directamente:  
+  **(DENTRO del entorno virtual, con Gunicorn corriendo)**  
+  ```bash
+  curl -I http://127.0.0.1:8000/
+  ```
+  Debes recibir `HTTP/1.1 200 OK`.
 
 ---
 
@@ -195,23 +217,39 @@ sudo systemctl enable flaskapp
 
 ---
 
-## 11. Problemas Comunes y Soluciones
+## 11. Errores Comunes y Soluciones
 
-- **Permiso denegado al conectar por SSH:** Revisa que usas `chmod 400` y el usuario es `ubuntu`.
-- **App no responde en el navegador:** Verifica que Gunicorn esté corriendo, Nginx configurado.
-- **Error 502 Bad Gateway:** Revisa que Gunicorn y Nginx estén activos y bien configurados.
-- **Puertos bloqueados:** Asegúrate de que el Security Group permite el puerto 80.
+- **Ejecutar Gunicorn fuera del venv:**  
+  Si no activas el entorno virtual antes de ejecutar Gunicorn, no funcionará y Nginx devolverá un error 502 Bad Gateway.
+  **Solución:** Activa el entorno virtual con `source venv/bin/activate` antes de ejecutar Gunicorn.
+
+- **sudo nginx -t: command not found:**  
+  Nginx no está instalado. Instálalo con `sudo apt install nginx`.
+- **Permiso denegado al conectar por SSH:**  
+  Revisa que usas `chmod 400` y el usuario es `ubuntu`.
+- **App no responde en el navegador:**  
+  Verifica que Gunicorn esté corriendo **dentro del venv** y Nginx esté configurado correctamente.
+- **Error 502 Bad Gateway:**  
+  Comprueba que Gunicorn corre **en el venv** y el proxy_pass apunta correctamente.
+- **sudo ln -s ... File exists:**  
+  El enlace ya existe. Elimínalo con `sudo rm /etc/nginx/sites-enabled/flaskapp`.
+- **rm: cannot remove ... Is a directory:**  
+  Estás intentando eliminar el directorio en vez de un archivo dentro. Usa el nombre completo del archivo/enlace.
 
 ---
 
-## 12. Consejos y Buenas Prácticas
+## 12. Buenas Prácticas
 
-- Usa siempre entorno virtual para tus proyectos Python.
-- Elimina reglas de SSH de tu Security Group tras el despliegue exitoso.
-- Mantén tu instancia EC2 actualizada (`sudo apt update && sudo apt upgrade`).
-- Monitorea costos en AWS (Free Tier tiene límites).
-- Guarda tu archivo `.pem` en lugar seguro y nunca lo compartas.
-- No uses la cuenta root de AWS para tareas rutinarias.
+- **Comandos a ejecutar DENTRO del venv:**
+  - Activar entorno virtual: `source venv/bin/activate`
+  - Instalar dependencias Python: `pip install ...`
+  - Ejecutar Flask o Gunicorn
+
+- **Comandos a ejecutar FUERA del venv:**
+  - Instalar dependencias del sistema (`sudo apt install ...`)
+  - Configuración y administración de Nginx
+  - Comandos `sudo` en general
+  - Clonado del repositorio
 
 ---
 
@@ -231,5 +269,6 @@ sudo systemctl enable flaskapp
 ---
 
 > Si tienes dudas, problemas no cubiertos o quieres contribuir, crea un issue en el repositorio.
+
 
 
