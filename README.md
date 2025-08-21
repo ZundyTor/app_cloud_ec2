@@ -19,7 +19,6 @@ Aplicación en Flask que:
 # URL / IP pública
 - Página principal: http://<PUBLIC_IP_O_DNS>/
 - API de conversión: http://<PUBLIC_IP_O_DNS>/api/convert?from=USD&to=EUR&amount=10
-- Descargar ZIP: http://<PUBLIC_IP_O_DNS>/download
 
 # Requisitos previos
 Local
@@ -35,7 +34,7 @@ AWS
 # Ejecutar localmente
 Windows (Powershell)
 ```
-cd C:\ruta\a\mi_app_ec2
+cd C:\ruta\a\app_cloud_ec2
 ```
 
 # Crear y activar venv
@@ -79,7 +78,7 @@ waitress-serve --port=8000 application:application
 
 # Linux/macOS
 ```
-cd ~/mi_app_ec2
+cd ~/app_cloud_ec2
 python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
@@ -115,24 +114,10 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y python3-pip python3-venv git nginx
 ```
 
-# (Opcional) crear usuario de despliegue
-```
-sudo adduser --disabled-password --gecos "" deployer
-sudo usermod -aG sudo deployer
-sudo mkdir -p /var/www
-sudo chown deployer:deployer /var/www
-```
-
-# Cambiar a deployer
-```
-sudo su - deployer
-cd /var/www
-```
-
 # Clonar repo (reemplaza TU_USUARIO)
 ```
-git clone https://github.com/TU_USUARIO/mi_app_ec2.git
-cd mi_app_ec2
+git clone https://github.com/ZundyTor/app_cloud_ec2
+cd app_cloud_ec2
 ```
 
 # Crear venv e instalar dependencias
@@ -150,7 +135,8 @@ pip install -r requirements.txt
 
 # systemd + Gunicorn + Nginx (archivos y comandos)
 Ejecutar como root o con sudo:
-``sudo tee /etc/systemd/system/mi_app_gunicorn.service > /dev/null <<'EOF'``
+```
+sudo tee /etc/systemd/system/mi_app_gunicorn.service > /dev/null <<'EOF'
 [Unit]
 Description=Gunicorn instance to serve mi_app_ec2
 After=network.target
@@ -165,6 +151,7 @@ ExecStart=/var/www/mi_app_ec2/venv/bin/gunicorn --workers 3 --bind unix:/var/www
 [Install]
 WantedBy=multi-user.target
 EOF
+```
 
 # Activar y arrancar:
 ```
@@ -206,7 +193,7 @@ sudo systemctl restart nginx
 Comprobaciones recomendadas:
 1. UI: abrir http://<PUBLIC_IP_O_DNS>/ — la interfaz debe mostrarse con dropdowns, input y botones.
 
-Problemas comunes y soluciones
+# Problemas comunes y soluciones
 - 502 Bad Gateway (Nginx)
     - Causa: Gunicorn no está corriendo o socket incorrecto.
     - Comandos de depuración:
@@ -234,24 +221,4 @@ Consola (GUI):
 - EC2 → Key Pairs → eliminar si no se usará
 - S3 → eliminar buckets (si se crearon)
 
-AWS CLI (si configurado):
-aws ec2 terminate-instances --instance-ids i-XXXXXXXXXXXXX
-aws ec2 delete-key-pair --key-name mi-key-name
-aws s3 rb s3://mi-bucket --force
-
 Espera que el estado sea terminated y revisa Cost Explorer para confirmar que no haya cargos residuales.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
