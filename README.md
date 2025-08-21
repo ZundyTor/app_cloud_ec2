@@ -1,225 +1,235 @@
-# Descripción
-Aplicación web mínima en Flask (Python) que convierte montos entre USD / EUR / COP usando tasas de ejemplo. Incluye UI con dos listas desplegables, campo de monto y botón Convertir, y botón para descargar un ZIP con todo el proyecto (/download).
+# Conversor de Moneda Flask en la Nube (AWS EC2)
 
-Aplicación en Flask que:
-- Convierte cantidades entre USD, EUR y COP (tasas fijas).
-- Muestra una UI responsiva con dropdowns, input y botones.
-- Permite descargar el código completo vía /download para que otra persona lo ejecute localmente.
+## Descripción
 
-# Tecnologías
-- Python 3.10+
-- Flask
-- Gunicorn (para Linux/EC2)
-- Waitress (opcional para Windows)
-- Nginx (reverse proxy)
-- systemd (servicio de Gunicorn)
-- Git / GitHub
-- AWS EC2 (Ubuntu Server 22.04 LTS — t2.micro/t3.micro Free Tier)
+Aplicación web mínima en Flask (Python) que convierte montos entre USD, EUR y COP usando tasas fijas de ejemplo.  
+Incluye una interfaz web con listas desplegables, campo de monto, botón Convertir y opción para descargar el código fuente como ZIP (`/download`).  
+El objetivo es demostrar el despliegue y funcionamiento en la nube usando AWS EC2.
 
-# URL / IP pública
-- Página principal: http://<PUBLIC_IP_O_DNS>/
-- API de conversión: http://<PUBLIC_IP_O_DNS>/api/convert?from=USD&to=EUR&amount=10
+## Tecnologías Utilizadas
 
-# Requisitos previos
-Local
-- Python 3 instalado (python --version o py -3 --version).
-- Git.
-- Conocimientos básicos de terminal/PowerShell.
-AWS
-- Cuenta AWS activa.
-- IAM user recomendado (no root) para tareas rutinarias.
-- Key Pair (.pem) para SSH.
-- Conocer Free Tier (usar t2.micro/t3.micro y vigilar facturación).
+- **Python 3.10+**
+- **Flask** (microframework web)
+- **Gunicorn** (WSGI server para producción en Linux/EC2)
+- **Nginx** (reverse proxy para producción)
+- **systemd** (servicio de Gunicorn)
+- **Git / GitHub**
+- **AWS EC2** (Ubuntu Server 22.04 LTS — t2.micro/t3.micro Free Tier)
 
-# Ejecutar localmente
-Windows (Powershell)
-```
-cd C:\ruta\a\app_cloud_ec2
-```
+## URL / IP Pública
 
-# Crear y activar venv
-Windows (Powershell)
-```
-python -m venv venv
-```
+- Página principal: `http://<PUBLIC_IP>/`
+- API de conversión: `http://<PUBLIC_IP>/api/convert?from=USD&to=EUR&amount=10`
+- Descargar proyecto: `http://<PUBLIC_IP>/download`
 
-# Si PowerShell bloquea scripts (temporal para sesión)
-Windows (Powershell)
-```
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
-```
+> **Nota:** Reemplaza `<PUBLIC_IP>` por la dirección pública de tu instancia EC2.
 
-# Activar
-Windows (Powershell)
-```
-.\venv\Scripts\Activate.ps1
-```
+## Requisitos Previos
 
-# Instalar dependencias
-Windows (Powershell)
-```
-pip install --upgrade pip
-pip install -r requirements.txt
-```
+### Local
 
-# Ejecutar (dev)
-Windows (Powershell)
-```
-python application.py
-```
-- Abrir http://localhost:5000
+- Python 3.x instalado (`python3 --version`)
+- Git instalado
+- Conocimientos básicos de terminal/Línea de comandos
 
-# Opcional si falla en Windows
-Windows (Powershell)
-```
-pip install waitress
-waitress-serve --port=8000 application:application
+### AWS
+
+- Cuenta activa en AWS (puedes usar Free Tier)
+- Usuario IAM (recomendado, no usar root para tareas rutinarias)
+- Key Pair (.pem) para acceso SSH
+- Familiaridad con consola AWS y SSH
+
+---
+
+## Instrucciones de Despliegue en AWS EC2
+
+### 1. Crear Instancia EC2
+
+1. Ingresa a [AWS EC2](https://console.aws.amazon.com/ec2/)
+2. Haz clic en **Launch Instance**
+3. Selecciona **Ubuntu Server 22.04 LTS (Free Tier eligible)**
+4. Elige el tipo de instancia **t2.micro** o **t3.micro** (Free Tier)
+5. **Key Pair:** Crea o selecciona una existente. Descarga el archivo `.pem` y guárdalo de forma segura.
+6. En **Network settings**, configura el **Security Group**:
+    - Permite el puerto **22** (SSH) solo para tu IP.
+    - Permite el puerto **80** (HTTP) de cualquier origen (`0.0.0.0/0`).
+    - Permite el puerto **443** (HTTPS) si planeas usar HTTPS.
+7. Lanza la instancia.
+
+### 2. Conectar por SSH
+
+En tu terminal local, navega donde guardaste el `.pem` y conecta usando la IP pública de la instancia:
+
+```bash
+chmod 400 tu_clave.pem
+ssh -i tu_clave.pem ubuntu@<PUBLIC_IP>
 ```
 
-# Linux/macOS
-```
-cd ~/app_cloud_ec2
-python3 -m venv venv
-source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-python application.py
-```
-- Abrir http://localhost:5000
-- Para detener el servidor: Ctrl + C. Para salir del venv: deactivate
+### 3. Actualizar e Instalar Dependencias
 
-# Crear y configurar EC2 (consola AWS — pasos)
-1. EC2 → Launch instances.
-2. AMI: Ubuntu Server 22.04 LTS.
-3. Instance type: t2.micro (o t3.micro si está disponible y es elegible Free Tier).
-4. Key pair: crea/descarga .pem (guárdalo seguro).
-5. Security group inbound (crear/revisar):
-    - SSH (22) — Source: tu IP (usar “My IP”)
-    - HTTP (80) — Source: 0.0.0.0/0
-    - (Opcional) HTTPS (443) — 0.0.0.0/0
-6. Launch → obtener Public IPv4 / Public DNS.
-Seguridad: restringe SSH a tu IP siempre que sea posible
-
-# Despliegue en la instancia (Ubuntu 22.04)
-Desde máquina local:
-```
-chmod 400 mi_aws_key.pem
-ssh -i "mi_aws_key.pem" ubuntu@<PUBLIC_IP_O_DNS>
-```
-
-# En la instancia (usuario ubuntu):
-- Actualizar e instalar paquetes
-```
+```bash
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y python3-pip python3-venv git nginx
+sudo apt install python3-pip python3-venv git nginx -y
 ```
 
-# Clonar repositorio
-```
-git clone https://github.com/ZundyTor/app_cloud_ec2
+### 4. Clonar el Proyecto
+
+```bash
+git clone https://github.com/ZundyTor/app_cloud_ec2.git
 cd app_cloud_ec2
 ```
 
-# Crear venv e instalar dependencias
-```
+### 5. Crear y Activar Entorno Virtual
+
+```bash
 python3 -m venv venv
 source venv/bin/activate
+```
+
+### 6. Instalar Dependencias Python
+
+```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-# Probar con gunicorn (temporal)
-``gunicorn --bind 0.0.0.0:8000 application:application``
-- Abrir en navegador: http://<PUBLIC_IP_O_DNS>:8000
-- Ctrl+C para detener
+### 7. Probar la Aplicación (solo para validar)
 
-# systemd + Gunicorn + Nginx (archivos y comandos)
-Ejecutar como root o con sudo:
+```bash
+python application.py
 ```
-sudo tee /etc/systemd/system/mi_app_gunicorn.service > /dev/null <<'EOF'
-[Unit]
-Description=Gunicorn instance to serve mi_app_ec2
-After=network.target
+- Accede desde el navegador: `http://<PUBLIC_IP>:5000`
+- Para producción, **detén** el servidor con `Ctrl+C`.
 
-[Service]
-User=deployer
-Group=www-data
-WorkingDirectory=/var/www/mi_app_ec2
-Environment="PATH=/var/www/mi_app_ec2/venv/bin"
-ExecStart=/var/www/mi_app_ec2/venv/bin/gunicorn --workers 3 --bind unix:/var/www/mi_app_ec2/mi_app.sock application:application
+---
 
-[Install]
-WantedBy=multi-user.target
-EOF
+## 8. Desplegar con Gunicorn y Nginx (Modo Producción)
+
+### 8.1. Ejecutar con Gunicorn
+
+```bash
+gunicorn --bind 0.0.0.0:8000 application:application
 ```
+- La app estará en el puerto 8000.
 
-# Activar y arrancar:
-```
-sudo systemctl daemon-reload
-sudo systemctl start mi_app_gunicorn
-sudo systemctl enable mi_app_gunicorn
-sudo systemctl status mi_app_gunicorn
+### 8.2. Configurar Nginx como Reverse Proxy
+
+1. Crea archivo de configuración:
+
+```bash
+sudo nano /etc/nginx/sites-available/flaskapp
 ```
 
-# Configurar Nginx
-Crear archivo /etc/nginx/sites-available/mi_app:
+2. Agrega lo siguiente:
+
 ```
-sudo tee /etc/nginx/sites-available/mi_app > /dev/null <<'EOF'
 server {
     listen 80;
-    server_name _;
+    server_name <PUBLIC_IP>;
 
     location / {
-        include proxy_params;
-        proxy_pass http://unix:/var/www/mi_app_ec2/mi_app.sock;
-    }
-
-    location /static/ {
-        alias /var/www/mi_app_ec2/static/;
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
-EOF
 ```
 
-# Habilitar y reiniciar Nginx:
-```
-sudo ln -s /etc/nginx/sites-available/mi_app /etc/nginx/sites-enabled/
+3. Habilita el sitio y reinicia Nginx:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/flaskapp /etc/nginx/sites-enabled
 sudo nginx -t
 sudo systemctl restart nginx
 ```
-- Verifica en navegador: http://<PUBLIC_IP_O_DNS>/
 
-# Verificación y pruebas
-Comprobaciones recomendadas:
-1. UI: abrir http://<PUBLIC_IP_O_DNS>/ — la interfaz debe mostrarse con dropdowns, input y botones.
+### 8.3. Crear Servicio systemd (opcional, para ejecución automática)
 
-# Problemas comunes y soluciones
-- 502 Bad Gateway (Nginx)
-    - Causa: Gunicorn no está corriendo o socket incorrecto.
-    - Comandos de depuración:
-        sudo systemctl status mi_app_gunicorn
-        sudo journalctl -u mi_app_gunicorn -n 200
-        sudo tail -n 200 /var/log/nginx/error.log
-    - Solución: revisar ExecStart y rutas de socket, reiniciar servicio.
-- Permisos .pem / SSH
-    - Ejecuta: chmod 400 mi_aws_key.pem y usa el usuario correcto (ubuntu@...).
-- gunicorn: command not found
-    - Asegúrate de activar el venv antes: source venv/bin/activate y pip install gunicorn
-- WSGI: callable 'application' no encontrado
-    - Verificar que tu archivo sea application.py y contenga application = Flask(...). En systemd/Gunicorn se usa application:application
-- PowerShell - ejecución de scripts bloqueada
-    - Para la sesión actual: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
-    - Alternativa para activar: usar activate.bat en Windows o CMD:
-        .\venv\Scripts\activate.bat
-- Cargos inesperados
-    - Revisa EC2 Instances, EBS Volumes, S3 Buckets. Termina instancias y borra volúmenes. Consulta Billing & Cost Explorer.
+```bash
+sudo nano /etc/systemd/system/flaskapp.service
+```
 
-# Limpieza / evitar cobros
-Consola (GUI):
-- EC2 → Instances → seleccionar → Actions → Instance State → Terminate
-- EC2 → Volumes → eliminar volúmenes no usados 
-- EC2 → Key Pairs → eliminar si no se usará
-- S3 → eliminar buckets (si se crearon)
+Agrega:
 
-Espera que el estado sea terminated y revisa Cost Explorer para confirmar que no haya cargos residuales.
+```
+[Unit]
+Description=Gunicorn instance to serve Flask app
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/app_cloud_ec2
+Environment="PATH=/home/ubuntu/app_cloud_ec2/venv/bin"
+ExecStart=/home/ubuntu/app_cloud_ec2/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 application:application
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Habilita y arranca el servicio:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl start flaskapp
+sudo systemctl enable flaskapp
+```
+
+---
+
+## 9. Acceso y Verificación
+
+- Accede a `http://<PUBLIC_IP>/` desde cualquier navegador.
+- Prueba los endpoints, conversión y descarga de ZIP.
+
+---
+
+## 10. Configuración de Security Groups
+
+- **22 (SSH):** Solo para tu IP pública. Elimínalo o restringe tras el despliegue.
+- **80 (HTTP):** Abierto para todo el mundo (`0.0.0.0/0`).
+- **443 (HTTPS):** Opcional, requiere configuración adicional de SSL.
+- Asegúrate de **no exponer otros puertos innecesarios**.
+
+---
+
+## 11. Problemas Comunes y Soluciones
+
+- **Permiso denegado al conectar por SSH:** Revisa que usas `chmod 400` y el usuario es `ubuntu`.
+- **App no responde en el navegador:** Verifica que Gunicorn esté corriendo, Nginx configurado.
+- **Error 502 Bad Gateway:** Revisa que Gunicorn y Nginx estén activos y bien configurados.
+- **Puertos bloqueados:** Asegúrate de que el Security Group permite el puerto 80.
+
+---
+
+## 12. Consejos y Buenas Prácticas
+
+- Usa siempre entorno virtual para tus proyectos Python.
+- Elimina reglas de SSH de tu Security Group tras el despliegue exitoso.
+- Mantén tu instancia EC2 actualizada (`sudo apt update && sudo apt upgrade`).
+- Monitorea costos en AWS (Free Tier tiene límites).
+- Guarda tu archivo `.pem` en lugar seguro y nunca lo compartas.
+- No uses la cuenta root de AWS para tareas rutinarias.
+
+---
+
+## 13. Créditos y Autores
+
+- Desarrollo: [ZundyTor](https://github.com/ZundyTor)
+
+---
+
+## 14. Referencias
+
+- [Documentación Flask](https://flask.palletsprojects.com/)
+- [Guía oficial AWS EC2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html)
+- [Gunicorn](https://gunicorn.org/)
+- [Nginx](https://nginx.org/)
+
+---
+
+> Si tienes dudas, problemas no cubiertos o quieres contribuir, crea un issue en el repositorio.
+
 
