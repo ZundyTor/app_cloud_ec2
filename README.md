@@ -1,54 +1,19 @@
 # Conversor de Moneda Flask en la Nube (AWS EC2)
 
-## Descripción
-
 Aplicación web mínima en Flask (Python) que convierte montos entre USD, EUR y COP usando tasas fijas de ejemplo.  
 Incluye una interfaz web con listas desplegables, campo de monto, botón Convertir y opción para descargar el código fuente como ZIP (`/download`).  
 El objetivo es demostrar el despliegue y funcionamiento en la nube usando AWS EC2.
 
 ---
 
-## Tecnologías Utilizadas
+# 🟢 Despliegue solo con Python y Flask
 
-- **Python 3.10+**
-- **Flask** (microframework web)
-- **Gunicorn** (WSGI server para producción en Linux/EC2)
-- **Nginx** (reverse proxy para producción)
-- **Git / GitHub**
-- **AWS EC2** (Ubuntu Server 22.04 LTS — t2.micro/t3.micro Free Tier)
+Esta es la manera más sencilla de desplegar la aplicación, ideal si eres principiante y no quieres configurar servidores adicionales.  
+La app funcionará directamente en tu instancia EC2 y será accesible desde tu navegador.
 
 ---
 
-## URL / IP Pública
-
-- Página principal: `http://<PUBLIC_IP>/`
-- API de conversión: `http://<PUBLIC_IP>/api/convert?from=USD&to=EUR&amount=10`
-- Descargar proyecto: `http://<PUBLIC_IP>/download`
-
-> **Nota:** Reemplaza `<PUBLIC_IP>` por la dirección pública de tu instancia EC2.
-
----
-
-## Requisitos Previos
-
-### Local
-
-- Python 3.x instalado (`python3 --version`)
-- Git instalado
-- Conocimientos básicos de terminal/Línea de comandos
-
-### AWS
-
-- Cuenta activa en AWS (puedes usar Free Tier)
-- Usuario IAM (recomendado, no usar root para tareas rutinarias)
-- Key Pair (.pem) para acceso SSH
-- Familiaridad con consola AWS y SSH
-
----
-
-## Instrucciones de Despliegue en AWS EC2
-
-### 1. Crear Instancia EC2
+## 1. Crear Instancia EC2
 
 1. Ingresa a [AWS EC2](https://console.aws.amazon.com/ec2/)
 2. Haz clic en **Launch Instance**
@@ -57,11 +22,12 @@ El objetivo es demostrar el despliegue y funcionamiento en la nube usando AWS EC
 5. **Key Pair:** Crea o selecciona una existente. Descarga el archivo `.pem` y guárdalo de forma segura.
 6. En **Network settings**, configura el **Security Group**:
     - Permite el puerto **22** (SSH) solo para tu IP.
-    - Permite el puerto **80** (HTTP) de cualquier origen (`0.0.0.0/0`).
-    - Permite el puerto **443** (HTTPS) si planeas usar HTTPS.
+    - Permite el puerto **5000** (TCP) para todo el mundo (`0.0.0.0/0`). *(Así podrás acceder por el navegador)*
 7. Lanza la instancia.
 
-### 2. Conectar por SSH
+---
+
+## 2. Conectar por SSH
 
 En tu terminal local, navega donde guardaste el `.pem` y conecta usando la IP pública de la instancia:
 
@@ -72,7 +38,83 @@ ssh -i tu_clave.pem ubuntu@<PUBLIC_IP>
 
 ---
 
-### 3. Actualizar e Instalar Dependencias  
+## 3. Instalar Python y Git
+
+```bash
+sudo apt update
+sudo apt install python3-pip git -y
+```
+
+---
+
+## 4. Instalar Flask
+
+```bash
+pip3 install flask
+```
+
+---
+
+## 5. Clonar el Proyecto
+
+```bash
+git clone https://github.com/ZundyTor/app_cloud_ec2.git
+cd app_cloud_ec2
+```
+
+---
+
+## 6. Ejecutar la Aplicación Flask
+
+```bash
+python3 application.py
+```
+
+---
+
+## 7. Acceder desde el Navegador
+
+- Ve a **http://<PUBLIC_IP>:5000/** en tu navegador (donde `<PUBLIC_IP>` es la IP pública de tu instancia EC2).
+- ¡Ya puedes usar el conversor y descargar el ZIP!
+
+---
+
+## 8. Detener la Aplicación
+
+- Para detener la app presiona `Ctrl+C` en la terminal.
+
+---
+
+## 9. Notas y Recomendaciones
+
+- **Esta forma NO es recomendada para producción** (es perfecta para pruebas, aprendizaje y demos).
+- Si cierras la terminal, la app se detiene.
+- Si necesitas que la app esté siempre disponible y sea segura, usa la forma profesional (ver abajo).
+
+---
+
+# ⚡ Despliegue con Gunicorn y Nginx
+
+Esta es la manera recomendada para producción, ya que es más segura, robusta y escalable.
+
+---
+
+## 1. Crear Instancia EC2
+
+(Son los mismos pasos que arriba, pero para producción se recomienda abrir solo los puertos 22 y 80).
+
+---
+
+## 2. Conectar por SSH
+
+```bash
+chmod 400 tu_clave.pem
+ssh -i tu_clave.pem ubuntu@<PUBLIC_IP>
+```
+
+---
+
+## 3. Actualizar e Instalar Dependencias  
 **(Ejecuta estos comandos FUERA del entorno virtual)**
 
 ```bash
@@ -83,7 +125,8 @@ sudo apt install python3-pip python3-venv git nginx -y
 
 ---
 
-### 4. Clonar el Proyecto  
+## 4. Clonar el Proyecto  
+**(FUERA del entorno virtual)**
 ```bash
 git clone https://github.com/ZundyTor/app_cloud_ec2.git
 cd app_cloud_ec2
@@ -91,7 +134,8 @@ cd app_cloud_ec2
 
 ---
 
-### 5. Crear y Activar Entorno Virtual  
+## 5. Crear y Activar Entorno Virtual  
+**(FUERA para crear, DENTRO para activar)**
 
 ```bash
 python3 -m venv venv
@@ -104,7 +148,7 @@ source venv/bin/activate
 
 ---
 
-### 6. Instalar Dependencias Python  
+## 6. Instalar Dependencias Python  
 **(DENTRO del entorno virtual)**
 
 ```bash
@@ -114,7 +158,7 @@ pip install -r requirements.txt
 
 ---
 
-### 7. Probar la Aplicación Flask (solo para validar)  
+## 7. Probar la Aplicación Flask (solo para validar)  
 **(DENTRO del entorno virtual)**
 
 ```bash
@@ -269,6 +313,8 @@ python application.py
 ---
 
 > Si tienes dudas, problemas no cubiertos o quieres contribuir, crea un issue en el repositorio.
+
+
 
 
 
