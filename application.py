@@ -4,12 +4,12 @@ import io, zipfile, os
 application = Flask(__name__)
 
 RATES = {
-    "USD_EUR": 0.92,
-    "EUR_USD": 1.09,
-    "COP_USD": 0.00027,
-    "USD_COP": 3700.0,
-    "EUR_COP": 4040.0,
-    "COP_EUR": 0.000247
+    "USD_EUR": 0.853,
+    "EUR_USD": 1.16,
+    "COP_USD": 0.00025,
+    "USD_COP": 4.036,
+    "EUR_COP": 4.690,
+    "COP_EUR": 0.00021
 }
 
 def convert_amount(frm: str, to: str, amount: float):
@@ -187,6 +187,7 @@ def download_zip():
 
 if __name__ == '__main__':
     application.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
