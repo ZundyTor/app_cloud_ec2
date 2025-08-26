@@ -8,8 +8,8 @@ El objetivo es demostrar el despliegue y funcionamiento en la nube usando AWS EC
 
 # 🟢 Despliegue solo con Python y Flask
 
-Esta es la manera más sencilla de desplegar la aplicación, ideal si eres principiante y no quieres configurar servidores adicionales.  
-La app funcionará directamente en tu instancia EC2 y será accesible desde tu navegador.
+Esta es la manera más sencilla de desplegar la aplicación, ideal si no se quiere configurar servidores adicionales.  
+La app funcionará directamente en la instancia EC2 y será accesible desde el navegador.
 
 ---
 
@@ -313,6 +313,7 @@ python application.py
 ---
 
 > Si tienes dudas, problemas no cubiertos o quieres contribuir, crea un issue en el repositorio.
+
 
 
 
