@@ -6,23 +6,27 @@ El objetivo es demostrar el despliegue y funcionamiento en la nube usando AWS EC
 
 ---
 
-# 🟢 Despliegue solo con Python y Flask
-
-Esta es la manera más sencilla de desplegar la aplicación, ideal si no se quiere configurar servidores adicionales.  
-La app funcionará directamente en la instancia EC2 y será accesible desde el navegador.
-
----
-
 ## Tecnologías Utilizadas
 
+### 🟩 Forma Fácil (solo con Python y Flask)
 - **Python 3.10+**
 - **Flask** (framework web ligero)
 - **JavaScript** (interactividad en el navegador)
 - **HTML + CSS** (interfaz web, diseño responsivo)
-- **Gunicorn** (WSGI server para producción en Linux/EC2)
-- **Nginx** (reverse proxy para producción)
 - **Git / GitHub**
 - **AWS EC2** (Ubuntu Server 22.04 LTS — t2.micro/t3.micro Free Tier)
+
+### ⚡ Forma Profesional (producción con Gunicorn y Nginx)
+- **Gunicorn** (WSGI server para producción en Linux/EC2)
+- **Nginx** (reverse proxy para producción)
+- *(Incluye todas las tecnologías anteriores)*
+
+---
+
+# 🟢 Despliegue solo con Python y Flask
+
+Esta es la manera más sencilla de desplegar la aplicación, ideal si no se quiere configurar servidores adicionales.  
+La app funcionará directamente en la instancia EC2 y será accesible desde el navegador.
 
 ---
 
@@ -326,6 +330,7 @@ python application.py
 ---
 
 > Si tienes dudas, problemas no cubiertos o quieres contribuir, crea un issue en el repositorio.
+
 
 
 
