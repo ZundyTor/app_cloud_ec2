@@ -13,6 +13,19 @@ La app funcionará directamente en la instancia EC2 y será accesible desde el n
 
 ---
 
+## Tecnologías Utilizadas
+
+- **Python 3.10+**
+- **Flask** (framework web ligero)
+- **JavaScript** (interactividad en el navegador)
+- **HTML + CSS** (interfaz web, diseño responsivo)
+- **Gunicorn** (WSGI server para producción en Linux/EC2)
+- **Nginx** (reverse proxy para producción)
+- **Git / GitHub**
+- **AWS EC2** (Ubuntu Server 22.04 LTS — t2.micro/t3.micro Free Tier)
+
+---
+
 ## 1. Crear Instancia EC2
 
 1. Ingresa a [AWS EC2](https://console.aws.amazon.com/ec2/)
@@ -313,6 +326,7 @@ python application.py
 ---
 
 > Si tienes dudas, problemas no cubiertos o quieres contribuir, crea un issue en el repositorio.
+
 
 
 
