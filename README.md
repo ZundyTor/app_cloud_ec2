@@ -23,6 +23,22 @@ El objetivo es demostrar el despliegue y funcionamiento en la nube usando AWS EC
 
 ---
 
+## Requisitos Previos para el Desarrollo
+
+Es necesario tener:
+
+- **Sistema Operativo:** Ubuntu 22.04 LTS (recomendado) o cualquier sistema basado en Linux.
+- **Python:** Versión 3.10 o superior.
+- **pip:** Gestor de paquetes para Python.
+- **Git:** Para clonar el repositorio.
+- **Acceso a una instancia EC2 de AWS:** (o entorno local compatible)
+- **Key Pair de AWS EC2:** Para acceder por SSH a la instancia.
+- **Conexión a internet:** Para instalar dependencias y clonar el proyecto.
+
+> Para el despliegue profesional, también necesitarás instalar Gunicorn y Nginx (ver instrucciones más abajo).
+
+---
+
 # 🟢 Despliegue solo con Python y Flask
 
 Esta es la manera más sencilla de desplegar la aplicación, ideal si no se quiere configurar servidores adicionales.  
@@ -330,6 +346,7 @@ python application.py
 ---
 
 > Si tienes dudas, problemas no cubiertos o quieres contribuir, crea un issue en el repositorio.
+
 
 
 
