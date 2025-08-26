@@ -49,8 +49,8 @@ La app funcionará directamente en la instancia EC2 y será accesible desde el n
 En tu terminal local, navega donde guardaste el `.pem` y conecta usando la IP pública de la instancia:
 
 ```bash
-chmod 400 tu_clave.pem
-ssh -i tu_clave.pem ubuntu@<PUBLIC_IP>
+chmod 400 tu_clave.pem // Linux
+ssh -i tu_clave.pem ubuntu@<PUBLIC_IP> // Windows
 ```
 
 ---
@@ -330,6 +330,7 @@ python application.py
 ---
 
 > Si tienes dudas, problemas no cubiertos o quieres contribuir, crea un issue en el repositorio.
+
 
 
 
