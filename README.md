@@ -1,4 +1,5 @@
 # Conversor de Moneda Flask en la Nube (AWS EC2)
+![Python Tests](https://github.com/ZundyTor/app_cloud_ec2/workflows/Python%20Tests/badge.svg)
 
 Aplicación web mínima en Flask (Python) que convierte montos entre USD, EUR y COP usando tasas fijas de ejemplo.  
 Incluye una interfaz web con listas desplegables, campo de monto, botón Convertir y opción para descargar el código fuente como ZIP (`/download`).  
