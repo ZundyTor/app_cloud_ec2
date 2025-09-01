@@ -385,6 +385,8 @@ python application.py
 
 ## 14. Referencias
 
+- [GitHub Actions - Getting Started](https://docs.github.com/en/actions/get-started/quickstart)
+- [GitHub Actions for Python](https://docs.github.com/en/actions/tutorials/build-and-test-code/python)
 - [Documentación Flask](https://flask.palletsprojects.com/)
 - [Guía oficial AWS EC2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html)
 - [Gunicorn](https://gunicorn.org/)
