@@ -7,6 +7,52 @@ El objetivo es demostrar el despliegue y funcionamiento en la nube usando AWS EC
 
 ---
 
+## 🚀 Automatización con GitHub Actions
+
+Este proyecto incorpora un workflow básico de integración continua utilizando **GitHub Actions**.  
+Cada vez que se realiza un `push` a la rama principal (`main`), se ejecutan automáticamente los siguientes pasos:
+
+- Instalación del entorno Python y dependencias del proyecto (`requirements.txt`)
+- Ejecución de tests automáticos (ubicados en `tests/`)
+- Validación básica del funcionamiento de la aplicación (status HTTP y pruebas unitarias)
+
+Esto permite detectar errores y asegurar la calidad del código antes de realizar despliegues manuales.
+
+### 📋 Instrucciones para desarrolladores
+
+1. Al realizar un cambio en el código, asegúrate de que los tests pasen localmente:
+   ```bash
+   python -m unittest discover
+   ```
+2. Haz commit y push a la rama principal (`main`). El workflow se ejecutará automáticamente en GitHub.
+3. Si algún test falla, visualiza el log en la pestaña *Actions* de GitHub para identificar el error.
+
+### 📝 Descripción del Workflow
+
+El archivo `.github/workflows/python.yml` define el proceso de validación automática:
+
+```yaml
+name: Python Tests
+on:
+  push:
+    branches: [ main ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: python -m unittest discover
+```
+
+---
+
 ## Tecnologías Utilizadas
 
 ### 🟩 Forma Fácil (solo con Python y Flask)
