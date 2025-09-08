@@ -1,11 +1,38 @@
 # Conversor de Moneda Flask en la Nube (AWS EC2)
 ![Python Tests](https://github.com/ZundyTor/app_cloud_ec2/workflows/Python%20Tests/badge.svg)
+ ![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)
 
 Aplicación web mínima en Flask (Python) que convierte montos entre USD, EUR y COP usando tasas fijas de ejemplo.  
 Incluye una interfaz web con listas desplegables, campo de monto, botón Convertir y opción para descargar el código fuente como ZIP (`/download`).  
 El objetivo es demostrar el despliegue y funcionamiento en la nube usando AWS EC2.
 
 ---
+
+## Docker
+
+### Construcción de la imagen
+
+```sh
+docker build -t app_cloud_ec2 .
+```
+
+### Ejecución del contenedor
+
+```sh
+docker run -p 8080:5000 app_cloud_ec2
+```
+
+- La aplicación estará disponible en [http://localhost:8080](http://localhost:8080)
+- Asegúrate de que el puerto (5000) coincida con el que utiliza tu aplicación en código fuente.
+
+### Requisitos
+
+- Docker instalado en tu sistema
+
+### Notas
+
+- El archivo `.dockerignore` evita copiar archivos y carpetas innecesarias al contenedor.
+
 
 ## 🚀 Automatización con GitHub Actions
 
@@ -373,7 +400,7 @@ python application.py
   - Instalar dependencias del sistema (`sudo apt install ...`)
   - Configuración y administración de Nginx
   - Comandos `sudo` en general
-  - Clonado del repositorio
+  - Clonado del repositorio 
 
 ---
 
