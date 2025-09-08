@@ -33,6 +33,7 @@ docker run -p 8080:5000 app_cloud_ec2
 
 - El archivo `.dockerignore` evita copiar archivos y carpetas innecesarias al contenedor.
 
+---
 
 ## 🚀 Automatización con GitHub Actions
 
